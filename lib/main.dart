@@ -1,18 +1,18 @@
+import 'package:MKDG/camera_overlay.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:mkdg/camera_overlay.dart';
+import 'package:flutter/services.dart';
+import 'package:wakelock/wakelock.dart';
 
-void main() => runApp(App());
+void main() {
+  Wakelock.enable();
+  runApp(App());
+}
 
 class App extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-//      title: 'MKDG',
-//      theme: ThemeData(
-//        primarySwatch: Colors.blue,
-//      ),
       home: HomePage(title: 'MKDG'),
     );
   }
@@ -28,15 +28,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   CameraController controller;
 
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     availableCameras().then((List<CameraDescription> cameras) {
-      controller = CameraController(cameras.last, ResolutionPreset.ultraHigh);
+      controller = CameraController(
+          cameras.firstWhere(
+            (CameraDescription cameraDescription) =>
+                cameraDescription.lensDirection == CameraLensDirection.back,
+            orElse: () => cameras.last, /**/
+          ),
+          ResolutionPreset.max);
       controller.initialize().then((_) {
+        controller.startImageStream((CameraImage image) {
+          print(image.format.toString());
+        });
         setState(() {});
       });
     });
@@ -44,18 +56,16 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Center(
+    return Scaffold(
+      body: Center(
           child: Stack(
-            children: [
-              if(controller != null && controller.value.isInitialized) CameraPreview(controller),
-              CameraOverlay(),
-            ],
-          )
-        ),
-      ),
+        children: [
+          if (controller != null) CameraPreview(controller),
+          SafeArea(
+            child: CameraOverlay(),
+          ),
+        ],
+      )),
     );
   }
-
 }

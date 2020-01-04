@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CameraOverlay extends StatefulWidget {
   @override
@@ -10,8 +11,9 @@ class _CameraOverlayState extends State<CameraOverlay> {
   @override
   Widget build(BuildContext context) {
     return SizedBox.fromSize(
-        size: MediaQuery.of(context).size,
-        child: Stack(children: [
+      size: MediaQuery.of(context).size,
+      child: Stack(
+        children: [
           PageView.builder(
             itemBuilder: (BuildContext context, int index) {
               return Placeholder();
@@ -27,8 +29,27 @@ class _CameraOverlayState extends State<CameraOverlay> {
                 ),
               ),
               Spacer(),
+              SizedBox(
+                height: 30,
+                child: PageView.builder(
+                  itemBuilder: (BuildContext context, int index) {
+                    return Center(
+                      child: Text(
+                        '$index',
+                        style: GoogleFonts.robotoMono(
+                          textStyle: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.only(bottom: 16.0, top: 2.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -68,6 +89,8 @@ class _CameraOverlayState extends State<CameraOverlay> {
               )
             ],
           ),
-        ]));
+        ],
+      ),
+    );
   }
 }
