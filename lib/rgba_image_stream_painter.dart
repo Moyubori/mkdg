@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 
+import 'package:MKDG/image_filters/image_filter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image/image.dart' as imglib;
@@ -8,16 +9,19 @@ import 'package:image/image.dart' as imglib;
 class _Painter extends ChangeNotifier implements CustomPainter {
   final Function onFirstFrameDrawn;
   final Stream<imglib.Image> imageStream;
+  final ImageFilter filter;
 
   bool onFirstFrameDrawnCalled = false;
 
   ui.Image _cachedImage;
   bool _paintedCachedImage = true;
 
-  _Painter(this.imageStream, {this.onFirstFrameDrawn}) {
+  _Painter(this.imageStream, this.filter, {this.onFirstFrameDrawn}) {
     imageStream.listen((imglib.Image image) {
       if (_paintedCachedImage) {
-        _decodeImage(image).then((ui.Image decodedImage) {
+//        Stopwatch stopwatch = new Stopwatch()..start();
+        _decodeImage(filter.compute(image)).then((ui.Image decodedImage) {
+//          print('conversion executed in ${stopwatch.elapsed.inMilliseconds}ms');
           _cachedImage = decodedImage;
           _paintedCachedImage = false;
           notifyListeners();
@@ -45,6 +49,7 @@ class _Painter extends ChangeNotifier implements CustomPainter {
     if (_cachedImage == null) {
       return;
     }
+//    Stopwatch stopwatch = new Stopwatch()..start();
 
     paintImage(
       canvas: canvas,
@@ -53,6 +58,7 @@ class _Painter extends ChangeNotifier implements CustomPainter {
       fit: BoxFit.cover,
       filterQuality: FilterQuality.none,
     );
+//    print('painting done in ${stopwatch.elapsed.inMilliseconds}ms');
 
     _paintedCachedImage = true;
 
@@ -71,16 +77,17 @@ class _Painter extends ChangeNotifier implements CustomPainter {
   get semanticsBuilder => null;
 
   @override
-  bool shouldRebuildSemantics(CustomPainter oldDelegate) {
-    return !_paintedCachedImage;
-  }
+  bool shouldRebuildSemantics(CustomPainter oldDelegate) =>
+      !_paintedCachedImage;
 }
 
 class RGBAImageStreamPainter extends StatefulWidget {
   final Stream<imglib.Image> imageStream;
   final Function onFirstFrameDrawn;
+  final ImageFilter filter;
 
-  RGBAImageStreamPainter(this.imageStream, {this.onFirstFrameDrawn});
+  RGBAImageStreamPainter(this.imageStream, this.filter,
+      {this.onFirstFrameDrawn});
 
   @override
   _RGBAImageStreamPainterState createState() => _RGBAImageStreamPainterState();
@@ -94,6 +101,7 @@ class _RGBAImageStreamPainterState extends State<RGBAImageStreamPainter> {
     super.initState();
     _painter = _Painter(
       widget.imageStream,
+      widget.filter,
       onFirstFrameDrawn: widget.onFirstFrameDrawn,
     );
   }

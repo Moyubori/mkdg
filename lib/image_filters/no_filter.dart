@@ -1,5 +1,5 @@
 import 'package:MKDG/image_filters/image_filter.dart';
-import 'package:image/src/image.dart';
+import 'package:image/image.dart';
 
 class NoFilter implements ImageFilter {
   @override

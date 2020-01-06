@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:MKDG/camera_overlay.dart';
 import 'package:MKDG/image_converter.dart';
+import 'package:MKDG/image_filters/canny_filter.dart';
 import 'package:MKDG/image_filters/image_filter.dart';
+import 'package:MKDG/image_filters/matrix_filter.dart';
 import 'package:MKDG/image_filters/no_filter.dart';
 import 'package:MKDG/rgba_image_stream_painter.dart';
 import 'package:camera/camera.dart';
@@ -14,7 +16,11 @@ import 'package:wakelock/wakelock.dart';
 
 final List<ImageFilter> filters = [
   NoFilter(),
-  NoFilter(),
+  MatrixFilter.sobel(),
+  MatrixFilter.roberts(),
+  MatrixFilter.prewitt(),
+  MatrixFilter.log(),
+  CannyFilter(),
 ];
 
 void main() {
@@ -96,7 +102,8 @@ class _HomePageState extends State<HomePage> {
             _buildCameraPreview(context),
           if (currentOverlayIndex > 0)
             RGBAImageStreamPainter(
-              imageStreamController.stream.asBroadcastStream(),
+              imageStreamController.stream,
+              filters[currentOverlayIndex],
               onFirstFrameDrawn: () {
                 firstCanvasFrameDrawn = true;
               },
