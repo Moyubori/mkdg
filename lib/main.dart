@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:MKDG/camera_overlay.dart';
 import 'package:MKDG/image_converter.dart';
+import 'package:MKDG/image_filters/image_filter.dart';
+import 'package:MKDG/image_filters/no_filter.dart';
 import 'package:MKDG/rgba_image_stream_painter.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
@@ -9,6 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart' as imglib;
 import 'package:wakelock/wakelock.dart';
+
+final List<ImageFilter> filters = [
+  NoFilter(),
+  NoFilter(),
+];
 
 void main() {
   runApp(App());
@@ -34,6 +41,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   CameraController _controller;
+  int currentOverlayIndex = 0;
+  bool firstCanvasFrameDrawn = false;
+  bool controllerInitialized = false;
 
   List<int> capturedImage;
   StreamController<imglib.Image> imageStreamController =
@@ -58,6 +68,7 @@ class _HomePageState extends State<HomePage> {
         enableAudio: false,
       );
       _controller.initialize().then((_) {
+        controllerInitialized = true;
         bool finishedPreviousFrame = true;
         _controller.startImageStream((CameraImage image) {
           if (finishedPreviousFrame) {
@@ -79,12 +90,28 @@ class _HomePageState extends State<HomePage> {
       body: Center(
           child: Stack(
         children: [
-//          if (_controller != null) _buildCameraPreview(context),
-          RGBAImageStreamPainter(
-            imageStreamController.stream.asBroadcastStream(),
-          ),
+          if (_controller != null &&
+              controllerInitialized &&
+              (currentOverlayIndex == 0 || !firstCanvasFrameDrawn))
+            _buildCameraPreview(context),
+          if (currentOverlayIndex > 0)
+            RGBAImageStreamPainter(
+              imageStreamController.stream.asBroadcastStream(),
+              onFirstFrameDrawn: () {
+                firstCanvasFrameDrawn = true;
+              },
+            ),
           SafeArea(
-            child: CameraOverlay(),
+            child: CameraOverlay(
+              filters: filters,
+              onPageChanged: (int index) {
+                currentOverlayIndex = index;
+                if (index == 0) {
+                  firstCanvasFrameDrawn = false;
+                }
+                setState(() {});
+              },
+            ),
           ),
         ],
       )),

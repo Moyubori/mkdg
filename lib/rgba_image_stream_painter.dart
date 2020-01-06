@@ -6,12 +6,15 @@ import 'package:flutter/widgets.dart';
 import 'package:image/image.dart' as imglib;
 
 class _Painter extends ChangeNotifier implements CustomPainter {
+  final Function onFirstFrameDrawn;
   final Stream<imglib.Image> imageStream;
+
+  bool onFirstFrameDrawnCalled = false;
 
   ui.Image _cachedImage;
   bool _paintedCachedImage = true;
 
-  _Painter(this.imageStream) {
+  _Painter(this.imageStream, {this.onFirstFrameDrawn}) {
     imageStream.listen((imglib.Image image) {
       if (_paintedCachedImage) {
         _decodeImage(image).then((ui.Image decodedImage) {
@@ -52,6 +55,10 @@ class _Painter extends ChangeNotifier implements CustomPainter {
     );
 
     _paintedCachedImage = true;
+
+    if (!onFirstFrameDrawnCalled && onFirstFrameDrawn != null) {
+      onFirstFrameDrawn();
+    }
   }
 
   @override
@@ -71,8 +78,9 @@ class _Painter extends ChangeNotifier implements CustomPainter {
 
 class RGBAImageStreamPainter extends StatefulWidget {
   final Stream<imglib.Image> imageStream;
+  final Function onFirstFrameDrawn;
 
-  RGBAImageStreamPainter(this.imageStream);
+  RGBAImageStreamPainter(this.imageStream, {this.onFirstFrameDrawn});
 
   @override
   _RGBAImageStreamPainterState createState() => _RGBAImageStreamPainterState();
@@ -80,18 +88,14 @@ class RGBAImageStreamPainter extends StatefulWidget {
 
 class _RGBAImageStreamPainterState extends State<RGBAImageStreamPainter> {
   CustomPainter _painter;
-//  Size _size;
 
   @override
   void initState() {
     super.initState();
-    _painter = _Painter(widget.imageStream);
-//    widget.imageStream.listen((imglib.Image image) {
-//      if (_size == null) {
-//        _size = Size(image.width.toDouble(), image.height.toDouble());
-//        setState(() {});
-//      }
-//    });
+    _painter = _Painter(
+      widget.imageStream,
+      onFirstFrameDrawn: widget.onFirstFrameDrawn,
+    );
   }
 
   @override
