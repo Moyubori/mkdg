@@ -3,6 +3,10 @@ import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CameraOverlay extends StatefulWidget {
+  final Function(int) onPageChanged;
+
+  const CameraOverlay({Key key, this.onPageChanged}) : super(key: key);
+
   @override
   _CameraOverlayState createState() => _CameraOverlayState();
 }
@@ -27,6 +31,9 @@ class _CameraOverlayState extends State<CameraOverlay> {
         children: [
           PageView.builder(
             controller: backgroundPageController,
+            onPageChanged: (int page) {
+              (widget.onPageChanged ?? (_) {})(page);
+            },
             itemCount: 10,
             itemBuilder: (BuildContext context, int index) {
               return Placeholder();

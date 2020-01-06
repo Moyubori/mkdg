@@ -62,15 +62,9 @@ class _HomePageState extends State<HomePage> {
         _controller.startImageStream((CameraImage image) {
           if (finishedPreviousFrame) {
             finishedPreviousFrame = false;
-//            compute(convertImage, image).then((convertedImage) {
-//              capturedImage = convertedImage;
-//              finishedPreviousFrame = true;
-////              setState(() {});
-//            });
             compute(convertImageToRGBA, image).then((convertedImage) {
               imageStreamController.add(convertedImage);
               finishedPreviousFrame = true;
-//              setState(() {});
             });
           }
         });
@@ -92,15 +86,6 @@ class _HomePageState extends State<HomePage> {
           SafeArea(
             child: CameraOverlay(),
           ),
-//          if (capturedImage != null)
-//            SizedBox(
-//              width: 500,
-//              height: 500,
-//              child: Transform.rotate(
-//                angle: pi / 2,
-//                child: Image.memory(capturedImage),
-//              ),
-//            ),
         ],
       )),
     );

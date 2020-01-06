@@ -3,7 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:image/image.dart' as imglib;
 
 Future<List<int>> convertImage(CameraImage image) async {
-  Stopwatch stopwatch = new Stopwatch()..start();
+//  Stopwatch stopwatch = new Stopwatch()..start();
   try {
     imglib.Image img;
     if (image.format.group == ImageFormatGroup.yuv420) {
@@ -23,7 +23,6 @@ Future<List<int>> convertImage(CameraImage image) async {
 }
 
 Future<imglib.Image> convertImageToRGBA(CameraImage image) async {
-  Stopwatch stopwatch = new Stopwatch()..start();
   try {
     imglib.Image img;
     if (image.format.group == ImageFormatGroup.yuv420) {
@@ -51,20 +50,15 @@ imglib.Image _convertYUV420(CameraImage image) {
   final imglib.Image img = imglib.Image(image.width, image.height);
   final Plane plane = image.planes[0];
   const int shift = (0xFF << 24);
-
-  // Fill image buffer with plane[0] from YUV420_888
   for (int x = 0; x < image.width; x++) {
     for (int planeOffset = 0;
         planeOffset < image.height * image.width;
         planeOffset += image.width) {
       final int pixelColor = plane.bytes[planeOffset + x];
-      // color: 0x FF  FF  FF  FF
-      //           A   B   G   R
-      final int newVal =
+      final int calculatedValue =
           shift | (pixelColor << 16) | (pixelColor << 8) | pixelColor;
-      img.data[planeOffset + x] = newVal;
+      img.data[planeOffset + x] = calculatedValue;
     }
   }
-
   return img;
 }

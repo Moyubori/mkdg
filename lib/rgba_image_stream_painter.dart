@@ -5,27 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image/image.dart' as imglib;
 
-class DecoderParameters {
-  final imglib.Image image;
-  final ui.ImageDecoderCallback callback;
-
-  DecoderParameters(this.image, this.callback);
-}
-
-Future<ui.Image> _decodeImage(imglib.Image image) async {
-  final Completer<ui.Image> completer = Completer<ui.Image>();
-  ui.decodeImageFromPixels(
-    image.getBytes(format: imglib.Format.rgba),
-    image.width,
-    image.height,
-    ui.PixelFormat.rgba8888,
-    (ui.Image decodedImage) {
-      completer.complete(decodedImage);
-    },
-  );
-  return await completer.future;
-}
-
 class _Painter extends ChangeNotifier implements CustomPainter {
   final Stream<imglib.Image> imageStream;
 
@@ -34,14 +13,6 @@ class _Painter extends ChangeNotifier implements CustomPainter {
 
   _Painter(this.imageStream) {
     imageStream.listen((imglib.Image image) {
-//      compute( // nie bangla
-//        _decodeImage,
-//        image,
-//      ).then((ui.Image decodedImage) {
-//        _cachedImage = decodedImage;
-//        _paintedCachedImage = false;
-//        notifyListeners();
-//      });
       if (_paintedCachedImage) {
         _decodeImage(image).then((ui.Image decodedImage) {
           _cachedImage = decodedImage;
@@ -50,6 +21,20 @@ class _Painter extends ChangeNotifier implements CustomPainter {
         });
       }
     });
+  }
+
+  Future<ui.Image> _decodeImage(imglib.Image image) async {
+    final Completer<ui.Image> completer = Completer<ui.Image>();
+    ui.decodeImageFromPixels(
+      image.getBytes(format: imglib.Format.rgba),
+      image.width,
+      image.height,
+      ui.PixelFormat.rgba8888,
+      (ui.Image decodedImage) {
+        completer.complete(decodedImage);
+      },
+    );
+    return await completer.future;
   }
 
   @override
