@@ -8,6 +8,17 @@ class CameraOverlay extends StatefulWidget {
 }
 
 class _CameraOverlayState extends State<CameraOverlay> {
+  final PageController backgroundPageController = PageController();
+  final PageController labelPageController = PageController();
+
+  @override
+  void initState() {
+    super.initState();
+    backgroundPageController.addListener(() {
+      labelPageController.jumpTo(backgroundPageController.offset);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox.fromSize(
@@ -15,6 +26,8 @@ class _CameraOverlayState extends State<CameraOverlay> {
       child: Stack(
         children: [
           PageView.builder(
+            controller: backgroundPageController,
+            itemCount: 10,
             itemBuilder: (BuildContext context, int index) {
               return Placeholder();
             },
@@ -32,6 +45,9 @@ class _CameraOverlayState extends State<CameraOverlay> {
               SizedBox(
                 height: 30,
                 child: PageView.builder(
+                  controller: labelPageController,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: 10,
                   itemBuilder: (BuildContext context, int index) {
                     return Center(
                       child: Text(
