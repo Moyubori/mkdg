@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 
-import 'package:MKDG/image_filters/image_filter.dart';
+import 'package:MKDG/main.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image/image.dart' as imglib;
@@ -9,19 +9,18 @@ import 'package:image/image.dart' as imglib;
 class _Painter extends ChangeNotifier implements CustomPainter {
   final Function onFirstFrameDrawn;
   final Stream<imglib.Image> imageStream;
-  final ImageFilter filter;
+  final ImageFilterProvider filterProvider;
 
   bool onFirstFrameDrawnCalled = false;
 
   ui.Image _cachedImage;
   bool _paintedCachedImage = true;
 
-  _Painter(this.imageStream, this.filter, {this.onFirstFrameDrawn}) {
+  _Painter(this.imageStream, this.filterProvider, {this.onFirstFrameDrawn}) {
     imageStream.listen((imglib.Image image) {
       if (_paintedCachedImage) {
-//        Stopwatch stopwatch = new Stopwatch()..start();
-        _decodeImage(filter.compute(image)).then((ui.Image decodedImage) {
-//          print('conversion executed in ${stopwatch.elapsed.inMilliseconds}ms');
+        _decodeImage(filterProvider.filter.compute(image))
+            .then((ui.Image decodedImage) {
           _cachedImage = decodedImage;
           _paintedCachedImage = false;
           notifyListeners();
@@ -49,8 +48,6 @@ class _Painter extends ChangeNotifier implements CustomPainter {
     if (_cachedImage == null) {
       return;
     }
-//    Stopwatch stopwatch = new Stopwatch()..start();
-
     paintImage(
       canvas: canvas,
       rect: Rect.fromLTWH(0, 0, size.width, size.height),
@@ -58,10 +55,7 @@ class _Painter extends ChangeNotifier implements CustomPainter {
       fit: BoxFit.cover,
       filterQuality: FilterQuality.none,
     );
-//    print('painting done in ${stopwatch.elapsed.inMilliseconds}ms');
-
     _paintedCachedImage = true;
-
     if (!onFirstFrameDrawnCalled && onFirstFrameDrawn != null) {
       onFirstFrameDrawn();
     }
@@ -84,9 +78,9 @@ class _Painter extends ChangeNotifier implements CustomPainter {
 class RGBAImageStreamPainter extends StatefulWidget {
   final Stream<imglib.Image> imageStream;
   final Function onFirstFrameDrawn;
-  final ImageFilter filter;
+  final ImageFilterProvider filterProvider;
 
-  RGBAImageStreamPainter(this.imageStream, this.filter,
+  RGBAImageStreamPainter(this.imageStream, this.filterProvider,
       {this.onFirstFrameDrawn});
 
   @override
@@ -94,14 +88,14 @@ class RGBAImageStreamPainter extends StatefulWidget {
 }
 
 class _RGBAImageStreamPainterState extends State<RGBAImageStreamPainter> {
-  CustomPainter _painter;
+  _Painter _painter;
 
   @override
   void initState() {
     super.initState();
     _painter = _Painter(
       widget.imageStream,
-      widget.filter,
+      widget.filterProvider,
       onFirstFrameDrawn: widget.onFirstFrameDrawn,
     );
   }

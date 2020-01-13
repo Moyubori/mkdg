@@ -5,7 +5,7 @@ class CannyFilter implements ImageFilter {
   @override
   Image compute(Image image) {
     // TODO: implement compute
-    return image;
+    return grayscale(image);
   }
 
   @override

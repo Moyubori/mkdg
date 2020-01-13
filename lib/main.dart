@@ -27,6 +27,12 @@ void main() {
   runApp(App());
 }
 
+class ImageFilterProvider {
+  ImageFilter filter;
+
+  ImageFilterProvider(this.filter);
+}
+
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -50,6 +56,8 @@ class _HomePageState extends State<HomePage> {
   int currentOverlayIndex = 0;
   bool firstCanvasFrameDrawn = false;
   bool controllerInitialized = false;
+
+  final ImageFilterProvider filterProvider = ImageFilterProvider(filters[0]);
 
   List<int> capturedImage;
   StreamController<imglib.Image> imageStreamController =
@@ -103,7 +111,7 @@ class _HomePageState extends State<HomePage> {
           if (currentOverlayIndex > 0)
             RGBAImageStreamPainter(
               imageStreamController.stream,
-              filters[currentOverlayIndex],
+              filterProvider,
               onFirstFrameDrawn: () {
                 firstCanvasFrameDrawn = true;
               },
@@ -113,6 +121,7 @@ class _HomePageState extends State<HomePage> {
               filters: filters,
               onPageChanged: (int index) {
                 currentOverlayIndex = index;
+                filterProvider.filter = filters[currentOverlayIndex];
                 if (index == 0) {
                   firstCanvasFrameDrawn = false;
                 }
