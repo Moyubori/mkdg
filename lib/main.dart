@@ -6,6 +6,7 @@ import 'package:MKDG/image_filters/canny_filter.dart';
 import 'package:MKDG/image_filters/image_filter.dart';
 import 'package:MKDG/image_filters/matrix_filter.dart';
 import 'package:MKDG/image_filters/no_filter.dart';
+import 'package:MKDG/image_filters/roberts_filter.dart';
 import 'package:MKDG/rgba_image_stream_painter.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
@@ -17,9 +18,9 @@ import 'package:wakelock/wakelock.dart';
 final List<ImageFilter> filters = [
   NoFilter(),
   MatrixFilter.sobel(),
-  MatrixFilter.roberts(),
   MatrixFilter.prewitt(),
   MatrixFilter.log(),
+  RobertsFilter(),
   CannyFilter(),
 ];
 

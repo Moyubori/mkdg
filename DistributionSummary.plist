@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Runner.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>armv7</string>
+				<string>arm64</string>
+			</array>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>99DDBBDF2CAF47EBB703819FC110C74A1FD6C506</string>
+				<key>dateExpires</key>
+				<string>16/11/2020</string>
+				<key>type</key>
+				<string>Apple Development</string>
+			</dict>
+			<key>embeddedBinaries</key>
+			<array>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>99DDBBDF2CAF47EBB703819FC110C74A1FD6C506</string>
+						<key>dateExpires</key>
+						<string>16/11/2020</string>
+						<key>type</key>
+						<string>Apple Development</string>
+					</dict>
+					<key>name</key>
+					<string>App.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>9BFBUN79E3</string>
+						<key>name</key>
+						<string>Tymoteusz Buczkowski</string>
+					</dict>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>99DDBBDF2CAF47EBB703819FC110C74A1FD6C506</string>
+						<key>dateExpires</key>
+						<string>16/11/2020</string>
+						<key>type</key>
+						<string>Apple Development</string>
+					</dict>
+					<key>name</key>
+					<string>Flutter.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>9BFBUN79E3</string>
+						<key>name</key>
+						<string>Tymoteusz Buczkowski</string>
+					</dict>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>99DDBBDF2CAF47EBB703819FC110C74A1FD6C506</string>
+						<key>dateExpires</key>
+						<string>16/11/2020</string>
+						<key>type</key>
+						<string>Apple Development</string>
+					</dict>
+					<key>name</key>
+					<string>camera.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>9BFBUN79E3</string>
+						<key>name</key>
+						<string>Tymoteusz Buczkowski</string>
+					</dict>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>99DDBBDF2CAF47EBB703819FC110C74A1FD6C506</string>
+						<key>dateExpires</key>
+						<string>16/11/2020</string>
+						<key>type</key>
+						<string>Apple Development</string>
+					</dict>
+					<key>name</key>
+					<string>path_provider.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>9BFBUN79E3</string>
+						<key>name</key>
+						<string>Tymoteusz Buczkowski</string>
+					</dict>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>99DDBBDF2CAF47EBB703819FC110C74A1FD6C506</string>
+						<key>dateExpires</key>
+						<string>16/11/2020</string>
+						<key>type</key>
+						<string>Apple Development</string>
+					</dict>
+					<key>name</key>
+					<string>wakelock.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>9BFBUN79E3</string>
+						<key>name</key>
+						<string>Tymoteusz Buczkowski</string>
+					</dict>
+				</dict>
+			</array>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>9BFBUN79E3.moyubori.mkdg</string>
+				<key>com.apple.developer.team-identifier</key>
+				<string>9BFBUN79E3</string>
+				<key>get-task-allow</key>
+				<true/>
+				<key>keychain-access-groups</key>
+				<array>
+					<string>9BFBUN79E3.moyubori.mkdg</string>
+				</array>
+			</dict>
+			<key>name</key>
+			<string>Runner.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>feea940e-5a47-4cfd-be1e-b2875df919a8</string>
+				<key>name</key>
+				<string>iOS Team Provisioning Profile: moyubori.mkdg</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>9BFBUN79E3</string>
+				<key>name</key>
+				<string>Tymoteusz Buczkowski</string>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>
