@@ -7,11 +7,13 @@ class CameraOverlay extends StatefulWidget {
   final List<ImageFilter> filters;
 
   final Function(int) onPageChanged;
+  final Function onShutterButtonPressed;
 
   const CameraOverlay({
     Key key,
     @required this.filters,
     this.onPageChanged,
+    this.onShutterButtonPressed,
   }) : super(key: key);
 
   @override
@@ -99,7 +101,7 @@ class _CameraOverlayState extends State<CameraOverlay> {
                         child: RaisedButton(
                           shape: CircleBorder(),
                           color: Colors.white,
-                          onPressed: () {},
+                          onPressed: widget.onShutterButtonPressed,
                         ),
                       ),
                     ),

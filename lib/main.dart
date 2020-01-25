@@ -13,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart' as imglib;
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:wakelock/wakelock.dart';
 
 final List<ImageFilter> filters = [
@@ -57,6 +58,7 @@ class _HomePageState extends State<HomePage> {
   int currentOverlayIndex = 0;
   bool firstCanvasFrameDrawn = false;
   bool controllerInitialized = false;
+  imglib.Image computedImage;
 
   final ImageFilterProvider filterProvider = ImageFilterProvider(filters[0]);
 
@@ -116,6 +118,10 @@ class _HomePageState extends State<HomePage> {
               onFirstFrameDrawn: () {
                 firstCanvasFrameDrawn = true;
               },
+              onFilterComputed: (imglib.Image image) {
+                computedImage = image;
+                setState(() {});
+              },
             ),
           SafeArea(
             child: CameraOverlay(
@@ -127,6 +133,11 @@ class _HomePageState extends State<HomePage> {
                   firstCanvasFrameDrawn = false;
                 }
                 setState(() {});
+              },
+              onShutterButtonPressed: () {
+                if (computedImage != null) {
+                  ImageGallerySaver.saveImage(computedImage.getBytes());
+                }
               },
             ),
           ),

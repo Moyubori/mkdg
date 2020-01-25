@@ -10,17 +10,24 @@ class _Painter extends ChangeNotifier implements CustomPainter {
   final Function onFirstFrameDrawn;
   final Stream<imglib.Image> imageStream;
   final ImageFilterProvider filterProvider;
+  final Function onFilterComputed;
 
   bool onFirstFrameDrawnCalled = false;
 
   ui.Image _cachedImage;
   bool _paintedCachedImage = true;
 
-  _Painter(this.imageStream, this.filterProvider, {this.onFirstFrameDrawn}) {
+  _Painter(
+    this.imageStream,
+    this.filterProvider, {
+    this.onFirstFrameDrawn,
+    this.onFilterComputed,
+  }) {
     imageStream.listen((imglib.Image image) {
       if (_paintedCachedImage) {
-        _decodeImage(filterProvider.filter.compute(image))
-            .then((ui.Image decodedImage) {
+        final imglib.Image computedImage = filterProvider.filter.compute(image);
+        (onFilterComputed ?? () {})(computedImage);
+        _decodeImage(computedImage).then((ui.Image decodedImage) {
           _cachedImage = decodedImage;
           _paintedCachedImage = false;
           notifyListeners();
@@ -79,9 +86,10 @@ class RGBAImageStreamPainter extends StatefulWidget {
   final Stream<imglib.Image> imageStream;
   final Function onFirstFrameDrawn;
   final ImageFilterProvider filterProvider;
+  final Function onFilterComputed;
 
   RGBAImageStreamPainter(this.imageStream, this.filterProvider,
-      {this.onFirstFrameDrawn});
+      {this.onFirstFrameDrawn, this.onFilterComputed});
 
   @override
   _RGBAImageStreamPainterState createState() => _RGBAImageStreamPainterState();
@@ -97,6 +105,7 @@ class _RGBAImageStreamPainterState extends State<RGBAImageStreamPainter> {
       widget.imageStream,
       widget.filterProvider,
       onFirstFrameDrawn: widget.onFirstFrameDrawn,
+      onFilterComputed: widget.onFilterComputed,
     );
   }
 
