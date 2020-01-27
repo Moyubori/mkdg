@@ -3,7 +3,9 @@ import 'dart:core';
 import 'package:MKDG/image_filters/image_filter.dart';
 import 'package:MKDG/image_filters/matrix_filter.dart';
 import 'package:extended_math/extended_math.dart';
-import 'package:image/image.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:image/image.dart' as imglib;
 
 //Apply Gaussian filter to smooth the image in order to remove the noise
 //Find the intensity gradients of the image
@@ -15,13 +17,18 @@ class CannyFilter implements ImageFilter {
   final MatrixFilter verticalSobel = MatrixFilter.sobel()..vertical = true;
   final MatrixFilter horizontalSobel = MatrixFilter.sobel();
 
-  @override
-  Image compute(Image image) {
-    grayscale(image);
-    gaussianBlur(image, 3);
+  int low = 12;
+  int high = 40;
 
-    final Image verticalGradient = verticalSobel.compute(Image.from(image));
-    final Image horizontalGradient = horizontalSobel.compute(Image.from(image));
+  @override
+  imglib.Image compute(imglib.Image image) {
+    imglib.grayscale(image);
+    imglib.gaussianBlur(image, 3);
+
+    final imglib.Image verticalGradient =
+        verticalSobel.compute(imglib.Image.from(image));
+    final imglib.Image horizontalGradient =
+        horizontalSobel.compute(imglib.Image.from(image));
     final List<num> gradientMagnitude = [];
     final List<num> thetas = [];
     num gradientMax = 0;
@@ -47,8 +54,8 @@ class CannyFilter implements ImageFilter {
       image,
       gradientMagnitude,
       thetas,
-      12,
-      40,
+      low,
+      high,
       weak,
     );
     _hysteresis(image, weak);
@@ -56,8 +63,8 @@ class CannyFilter implements ImageFilter {
     return image;
   }
 
-  Image _nonMaxSuppressionAndThreshold(Image image, List<num> input,
-      List<num> angles, int low, int high, int weak) {
+  imglib.Image _nonMaxSuppressionAndThreshold(imglib.Image image,
+      List<num> input, List<num> angles, int low, int high, int weak) {
     for (int x = 1; x < image.width - 1; x++) {
       for (int y = 1; y < image.height - 1; y++) {
         num q = 255;
@@ -90,8 +97,8 @@ class CannyFilter implements ImageFilter {
     return image;
   }
 
-  Image _hysteresis(Image image, int weak) {
-    final Function checkNeighbors = (Image _image, int x, int y) =>
+  imglib.Image _hysteresis(imglib.Image image, int weak) {
+    final Function checkNeighbors = (imglib.Image _image, int x, int y) =>
         _image.getPixel(x, y + 1) == 0xFFFFFFFF ||
         _image.getPixel(x, y - 1) == 0xFFFFFFFF ||
         _image.getPixel(x + 1, y + 1) == 0xFFFFFFFF ||
@@ -100,11 +107,11 @@ class CannyFilter implements ImageFilter {
         _image.getPixel(x - 1, y - 1) == 0xFFFFFFFF ||
         _image.getPixel(x + 1, y) == 0xFFFFFFFF ||
         _image.getPixel(x - 1, y) == 0xFFFFFFFF;
-    final Image topToBottomCopy = Image.from(image);
-    final Image bottomToTopCopy = Image.from(image);
-    final Image rightToLeftCopy = Image.from(image);
-    final Image leftToRightCopy = Image.from(image);
-    final Function performHysteresis = (Image copy, int startingX,
+    final imglib.Image topToBottomCopy = imglib.Image.from(image);
+    final imglib.Image bottomToTopCopy = imglib.Image.from(image);
+    final imglib.Image rightToLeftCopy = imglib.Image.from(image);
+    final imglib.Image leftToRightCopy = imglib.Image.from(image);
+    final Function performHysteresis = (imglib.Image copy, int startingX,
         int startingY, Function xCondition, Function yCondition, int dx, int dy,
         {bool isLastRun = false}) {
       for (int x = startingX; xCondition(x); x += dx) {
@@ -135,9 +142,28 @@ class CannyFilter implements ImageFilter {
     return image;
   }
 
-  int _rgbaToGrayscaleColor(Image image, int x, int y) =>
+  int _rgbaToGrayscaleColor(imglib.Image image, int x, int y) =>
       image.getPixel(x, y) & ImageFilter.mask;
 
   @override
   String get name => 'Canny';
+
+  @override
+  Widget buildControls(BuildContext context, Function setState) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: RangeSlider(
+        values: RangeValues(low.toDouble(), high.toDouble()),
+        min: 0,
+        max: 255,
+        divisions: 255,
+        onChanged: (RangeValues values) {
+          low = values.start.round();
+          high = values.end.round();
+          print(values);
+          setState(() {});
+        },
+      ),
+    );
+  }
 }

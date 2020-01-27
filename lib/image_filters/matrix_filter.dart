@@ -1,5 +1,7 @@
 import 'package:MKDG/image_filters/image_filter.dart';
-import 'package:image/image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:image/image.dart' as imglib;
 
 class MatrixFilter implements ImageFilter {
   final List<List<num>> matrix;
@@ -36,9 +38,9 @@ class MatrixFilter implements ImageFilter {
       );
 
   @override
-  Image compute(Image image) {
-    grayscale(image);
-    return convolution(image, _prepareMatrix(matrix, _vertical));
+  imglib.Image compute(imglib.Image image) {
+    imglib.grayscale(image);
+    return imglib.convolution(image, _prepareMatrix(matrix, _vertical));
   }
 
   List<num> _prepareMatrix(List<List<num>> matrix, bool vertical) {
@@ -49,5 +51,18 @@ class MatrixFilter implements ImageFilter {
       }
     }
     return outputMatrix;
+  }
+
+  @override
+  Widget buildControls(BuildContext context, Function setState) {
+    return Container(
+      child: Switch.adaptive(
+        value: _vertical,
+        onChanged: (bool val) {
+          _vertical = val;
+          setState(() {});
+        },
+      ),
+    );
   }
 }

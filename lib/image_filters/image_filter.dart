@@ -1,4 +1,5 @@
-import 'package:image/image.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:image/image.dart' as imglib;
 
 abstract class ImageFilter {
   static const int mask = 0x000000FF;
@@ -6,5 +7,7 @@ abstract class ImageFilter {
 
   String get name;
 
-  Image compute(Image image);
+  imglib.Image compute(imglib.Image image);
+
+  Widget buildControls(BuildContext context, Function setState);
 }

@@ -1,7 +1,8 @@
 import 'dart:core';
 
 import 'package:MKDG/image_filters/image_filter.dart';
-import 'package:image/image.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:image/image.dart' as imglib;
 
 class RobertsFilter implements ImageFilter {
   static const List<List<num>> _matrices = const [
@@ -10,11 +11,11 @@ class RobertsFilter implements ImageFilter {
   ];
 
   @override
-  Image compute(Image image) {
-    grayscale(image);
-    final Image copy = Image.from(image);
-    convolution(image, _matrices[0]);
-    convolution(copy, _matrices[1]);
+  imglib.Image compute(imglib.Image image) {
+    imglib.grayscale(image);
+    final imglib.Image copy = imglib.Image.from(image);
+    imglib.convolution(image, _matrices[0]);
+    imglib.convolution(copy, _matrices[1]);
     for (int i = 0; i < image.length; i++) {
       final int pixel1 = image[i] & ImageFilter.mask;
       final int pixel2 = copy[i] & ImageFilter.mask;
@@ -26,4 +27,9 @@ class RobertsFilter implements ImageFilter {
 
   @override
   String get name => 'Roberts';
+
+  @override
+  Widget buildControls(BuildContext context, Function setState) {
+    return Container();
+  }
 }

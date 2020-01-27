@@ -58,11 +58,14 @@ class _HomePageState extends State<HomePage> {
   int currentOverlayIndex = 0;
   bool firstCanvasFrameDrawn = false;
   bool controllerInitialized = false;
+
+  bool realTimePreview = true;
+  imglib.Image originalImageFromGallery;
+
   imglib.Image computedImage;
 
   final ImageFilterProvider filterProvider = ImageFilterProvider(filters[0]);
 
-  List<int> capturedImage;
   StreamController<imglib.Image> imageStreamController =
       StreamController<imglib.Image>.broadcast();
 
@@ -90,10 +93,15 @@ class _HomePageState extends State<HomePage> {
         _controller.startImageStream((CameraImage image) {
           if (finishedPreviousFrame) {
             finishedPreviousFrame = false;
-            compute(convertImageToRGBA, image).then((convertedImage) {
-              imageStreamController.add(convertedImage);
-              finishedPreviousFrame = true;
-            });
+            if (realTimePreview) {
+              compute(convertImageToRGBA, image).then((convertedImage) {
+                imageStreamController.add(convertedImage);
+                if (currentOverlayIndex == 0) {
+                  computedImage = convertedImage;
+                }
+                finishedPreviousFrame = true;
+              });
+            }
           }
         });
         setState(() {});
@@ -107,11 +115,12 @@ class _HomePageState extends State<HomePage> {
       body: Center(
           child: Stack(
         children: [
-          if (_controller != null &&
+          if (realTimePreview &&
+              _controller != null &&
               controllerInitialized &&
               (currentOverlayIndex == 0 || !firstCanvasFrameDrawn))
             _buildCameraPreview(context),
-          if (currentOverlayIndex > 0)
+          if (currentOverlayIndex > 0 || !realTimePreview)
             RGBAImageStreamPainter(
               imageStreamController.stream,
               filterProvider,
@@ -136,7 +145,9 @@ class _HomePageState extends State<HomePage> {
               },
               onShutterButtonPressed: () {
                 if (computedImage != null) {
-                  ImageGallerySaver.saveImage(computedImage.getBytes());
+                  ImageGallerySaver.saveImage(
+                    imglib.encodeJpg(computedImage),
+                  );
                 }
               },
             ),

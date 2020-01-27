@@ -24,13 +24,19 @@ class _CameraOverlayState extends State<CameraOverlay> {
   final PageController backgroundPageController = PageController();
   final PageController labelPageController = PageController();
 
+  int currentPage = 0;
+
   @override
   void initState() {
     super.initState();
     backgroundPageController.addListener(() {
       labelPageController.jumpTo(backgroundPageController.offset);
+      currentPage = backgroundPageController.page.round();
+      setState(() {});
     });
   }
+
+  // TODO kontrolki parametrów filtrów
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +60,10 @@ class _CameraOverlayState extends State<CameraOverlay> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
-                  children: <Widget>[],
+                  children: <Widget>[
+                    widget.filters[currentPage]
+                        .buildControls(context, setState),
+                  ],
                 ),
               ),
               Spacer(),
@@ -85,15 +94,6 @@ class _CameraOverlayState extends State<CameraOverlay> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Flexible(
-                      child: IconButton(
-                        color: Colors.white,
-                        icon: Icon(Icons.photo),
-                        onPressed: () {
-                          print('gallery button pressed');
-                        },
-                      ),
-                    ),
                     Expanded(
                       child: ConstrainedBox(
                         constraints:
@@ -102,17 +102,6 @@ class _CameraOverlayState extends State<CameraOverlay> {
                           shape: CircleBorder(),
                           color: Colors.white,
                           onPressed: widget.onShutterButtonPressed,
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      child: Opacity(
-                        opacity: 0,
-                        child: IgnorePointer(
-                          child: IconButton(
-                            icon: Icon(Icons.photo),
-                            onPressed: () {},
-                          ),
                         ),
                       ),
                     ),
